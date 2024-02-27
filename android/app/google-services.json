@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "49372722060",
+    "project_id": "internship-first-year",
+    "storage_bucket": "internship-first-year.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:49372722060:android:3cc0ef595aa0af961a5ca9",
+        "android_client_info": {
+          "package_name": "com.security.camera.custom_security_cam"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsvfyr-n0kc8nTXnf-EezziBywDkFEpu0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
