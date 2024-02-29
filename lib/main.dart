@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         fontFamily: GoogleFonts.dmSans().fontFamily,
         primarySwatch: Colors.grey,
       ),
-      home: FirebaseAuth.instance.currentUser?.email != null ? LoginPage() : HomePage(),
+      home: FirebaseAuth.instance.currentUser?.email != null ? HomePage() : LoginPage() ,
       routes: {
         '/homepage': (context) => HomePage(),
         '/loginpage': (context) => LoginPage(),

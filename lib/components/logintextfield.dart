@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class LoginTextField extends StatelessWidget {
@@ -36,3 +39,6 @@ class LoginTextField extends StatelessWidget {
   }
 }
 
+void logout() {
+  FirebaseAuth.instance.signOut();
+}

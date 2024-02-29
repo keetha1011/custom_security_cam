@@ -1,3 +1,4 @@
+import 'package:custom_security_cam/components/logintextfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -12,15 +13,26 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _SelectedIndex = 0;
-  List<Widget> _widgetOptions = <Widget> [
-    Container(
-      child: Text("Captures"),
-    ),
-    Container(
-      child: Text("Alerts"),
-    ),
-  ];
+    int _SelectedIndex = 0;
+    List<Widget> _widgetOptions = <Widget> [
+      Container(
+        child: Text("Captures"),
+      ),
+      Container(
+        child: Text("Alerts"),
+      ),
+      Container(
+        child: ElevatedButton(
+          onPressed: () {
+            logout();
+
+          },
+          child: Text("Logout"),
+        ),
+
+      )
+    ];
+
 
   @override
   Widget build(BuildContext context) {
