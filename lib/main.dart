@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'firebase_options.dart';
 import 'pages/login_page.dart';
-import 'pages/gallery_view.dart';
+import 'pages/home_page.dart';
 
 
 
@@ -25,12 +25,14 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   User? user = FirebaseAuth.instance.currentUser;
+  print(user);
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final User? user;
-  const MyApp({Key? key, this.user}) : super(key: key);
+  //final User? user;
+  //const MyApp({Key? key, this.user}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +41,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: false,
         fontFamily: GoogleFonts.dmSans().fontFamily,
-        primarySwatch: Colors.deepPurple,
+        primarySwatch: Colors.grey,
       ),
-      home: user != null ? ImageGalleryScreen() : LoginPage(),
+      home: FirebaseAuth.instance.currentUser?.email != null ? LoginPage() : HomePage(),
       routes: {
-
-        '/home': (context) => ImageGalleryScreen(),
+        '/homepage': (context) => HomePage(),
+        '/loginpage': (context) => LoginPage(),
       },
 
     );

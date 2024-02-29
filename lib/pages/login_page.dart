@@ -15,7 +15,7 @@ class LoginPage extends StatelessWidget {
         password: passwordController.text,
       );
       // Navigate to home page after successful login
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/homepage');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
