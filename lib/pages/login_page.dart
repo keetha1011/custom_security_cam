@@ -1,6 +1,8 @@
-import 'package:custom_security_cam/components/logintextfield.dart';
+import 'package:custom_security_cam/components/reusable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import 'home_page.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
@@ -15,7 +17,10 @@ class LoginPage extends StatelessWidget {
         password: passwordController.text,
       );
       // Navigate to home page after successful login
-      Navigator.pushReplacementNamed(context, '/homepage');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
@@ -28,7 +33,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(108, 103, 156, 1),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
           child: Column(

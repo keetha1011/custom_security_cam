@@ -1,8 +1,8 @@
-import 'package:custom_security_cam/components/logintextfield.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:custom_security_cam/pages/captures_view.dart';
+import 'package:custom_security_cam/pages/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'alerts_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,24 +13,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+
     int _SelectedIndex = 0;
     List<Widget> _widgetOptions = <Widget> [
-      Container(
-        child: Text("Captures"),
-      ),
-      Container(
-        child: Text("Alerts"),
-      ),
-      Container(
-        child: ElevatedButton(
-          onPressed: () {
-            logout();
-
-          },
-          child: Text("Logout"),
-        ),
-
-      )
+      CapturesGallery(),
+      AlertsList(),
+      Preferences(),
     ];
 
 
