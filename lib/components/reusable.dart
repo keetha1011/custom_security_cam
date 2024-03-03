@@ -76,7 +76,7 @@ Widget buildImage(String imageUrl) {
 }
 
 class DownloadAndDisplayImages extends StatefulWidget {
-  final String userEmail; // Pass user email securely
+  final String userEmail;
 
   const DownloadAndDisplayImages({Key? key, required this.userEmail})
       : super(key: key);
@@ -94,17 +94,17 @@ class ImagePreviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black, // Use opaque background for better image viewing
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.transparent, // Make app bar transparent
+        backgroundColor: Colors.transparent,
       ),
       body: Center(
         child: InteractiveViewer(
           child: Hero(
-            tag: imageUrl, // Enable hero animation for transition (optional)
+            tag: imageUrl,
             child: Image.network(
               imageUrl,
-              fit: BoxFit.contain, // Adjust fit as needed
+              fit: BoxFit.contain,
             ),
           ),
         ),
@@ -130,25 +130,23 @@ class _DownloadAndDisplayImagesState extends State<DownloadAndDisplayImages> {
       final ListResult imagesRef = await storage
           .ref()
           .child('$userEmail/captures')
-          .listAll(); // Get all images in the directory
+          .listAll();
       final List<Reference> imageRefs = imagesRef.items;
 
       List<Future<String?>> imageUrlFutures = imageRefs
           .map((imageRef) => imageRef.getDownloadURL())
-          .toList(); // Get download URLs for each image
+          .toList();
 
       List<String?> urls = await Future.wait(
-          imageUrlFutures); // Fetch URLs concurrently
-
+          imageUrlFutures);
       setState(() {
         imageUrls = urls;
-        isLoading = false; // Mark loading as done
+        isLoading = false;
       });
     } on FirebaseException catch (e) {
       setState(() {
         isLoading = false;
       });
-      // Handle exception gracefully (e.g., display error message)
       print("Error fetching images: $e");
     }
   }
@@ -158,45 +156,49 @@ class _DownloadAndDisplayImagesState extends State<DownloadAndDisplayImages> {
   @override
   Widget build(BuildContext context) {
     return isLoading
-        ? const Center(child: CircularProgressIndicator(color: Colors.black87,)) // Show loading indicator
-        : GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 3,
-      children: imageUrls.map((url) {
-        return GestureDetector(
-          onLongPress: () async {
-            if (url != null) {
-              // Show zoomed preview (replace with your implementation)
-              // Example using a modal:
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ImagePreviewScreen(imageUrl: url!),
+        ? const Center(child: CircularProgressIndicator(color: Colors.black87,))
+        : Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 2,
+                children: imageUrls.map((url) {
+          return GestureDetector(
+            onLongPress: () async {
+              if (url != null) {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ImagePreviewScreen(imageUrl: url!),
+                  ),
+                );
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: url != null
+                      ? Image.network(
+                    url,
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.cover,
+                  )
+                      : Image.asset(
+                    "assets/images/user.jpg",
+                    fit: BoxFit.cover,
+                    width: 200,
+                    height: 200,
+                  ),
                 ),
-              );
-            }
-          },
-          child: Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15), // Add rounded corners
-              child: url != null
-                  ? Image.network(
-                url,
-                width: 200,
-                height: 200,
-                fit: BoxFit.cover,
-              )
-                  : Image.asset(
-                "assets/images/user.jpg", // Placeholder image
-                fit: BoxFit.cover,
-                width: 200,
-                height: 200,
               ),
             ),
-          ),
+          );
+                }).toList(),
+              ),
         );
-      }).toList(),
-    );
   }
 }
