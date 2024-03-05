@@ -42,6 +42,7 @@ class _HomePageState extends State<HomePage> {
                 tabBackgroundColor: Colors.white12,
                 padding: EdgeInsets.all(16),
                 gap: 8,
+
                 tabs: [
                   GButton(
                     icon: Icons.photo,

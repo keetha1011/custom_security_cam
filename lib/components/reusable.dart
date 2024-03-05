@@ -1,3 +1,4 @@
+import 'dart:ui' as ui;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -94,24 +95,53 @@ class ImagePreviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-      ),
-      body: Center(
-        child: InteractiveViewer(
-          child: Hero(
-            tag: imageUrl,
-            child: Image.network(
-              imageUrl,
-              fit: BoxFit.contain,
+      // Wrap the entire content in a Stack widget
+      body: Stack(
+        children: [
+
+          Positioned.fill(
+            child: Hero(
+              tag: "blurred-$imageUrl",
+              child: Stack(
+                children: [
+                  Image.network(
+                    imageUrl,
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                    colorBlendMode: BlendMode.multiply,
+                    color: Colors.black.withOpacity(0.5),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    color: Colors.transparent,
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
+          Center(
+            child: InteractiveViewer(
+              boundaryMargin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20),
+              minScale: 1.0,
+              maxScale: 2.0,
+              clipBehavior: Clip.none,
+              child: Hero(
+                tag: imageUrl,
+                child: Image.network(
+                  imageUrl,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
+
+
 
 class _DownloadAndDisplayImagesState extends State<DownloadAndDisplayImages> {
   final FirebaseStorage storage = FirebaseStorage.instance;
@@ -165,7 +195,7 @@ class _DownloadAndDisplayImagesState extends State<DownloadAndDisplayImages> {
                 crossAxisCount: 2,
                 children: imageUrls.map((url) {
           return GestureDetector(
-            onLongPress: () async {
+            onTap: () async {
               if (url != null) {
                 await Navigator.push(
                   context,
