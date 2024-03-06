@@ -1,5 +1,6 @@
 import 'package:custom_security_cam/components/reusable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'home_page.dart';
@@ -12,20 +13,19 @@ class LoginPage extends StatelessWidget {
 
   Future<void> _login(BuildContext context) async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: usernameController.text,
-        password: passwordController.text,
-      );
-      // Navigate to home page after successful login
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        print('No user found for that email.');
+        if (kDebugMode) {
+          print('No user found for that email.');
+        }
       } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+        if (kDebugMode) {
+          print('Wrong password provided for that user.');
+        }
       }
     }
   }
@@ -71,7 +71,7 @@ class LoginPage extends StatelessWidget {
                 obscureText: false,
               ),
 
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
 
               LoginTextField(
                 controller: passwordController,
@@ -79,14 +79,14 @@ class LoginPage extends StatelessWidget {
                 obscureText: true,
               ),
 
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
 
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 25.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Text(
+                    Text(
                       "Forgot Password",
                       style: TextStyle(
                         color: Colors.black45,
@@ -102,7 +102,7 @@ class LoginPage extends StatelessWidget {
                 onPressed: () {
                   _login(context);
                 },
-                child: Text('Login'),
+                child: const Text('Login'),
               ),
             ],
           ),

@@ -15,11 +15,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
 
-    int _SelectedIndex = 0;
-    List<Widget> _widgetOptions = <Widget> [
-      CapturesGallery(),
-      AlertsList(),
-      Preferences(),
+    int selectedIndex = 0;
+    final List<Widget> _widgetOptions = <Widget> [
+      const CapturesGallery(),
+      const AlertsList(),
+      const Preferences(),
     ];
 
 
@@ -29,21 +29,21 @@ class _HomePageState extends State<HomePage> {
       debugShowCheckedModeBanner: false,
         home: Scaffold(
           body: Center(
-            child: _widgetOptions.elementAt(_SelectedIndex),
+            child: _widgetOptions.elementAt(selectedIndex),
           ),
           bottomNavigationBar: Container(
             color: Colors.black,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 10),
               child: GNav(
                 backgroundColor: Colors.black,
                 color: Colors.white54,
                 activeColor: Colors.white,
                 tabBackgroundColor: Colors.white12,
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 gap: 8,
 
-                tabs: [
+                tabs: const [
                   GButton(
                     icon: Icons.photo,
                     text: "Captures",
@@ -57,10 +57,10 @@ class _HomePageState extends State<HomePage> {
                     text: "Settings",
                   ),
                 ],
-                selectedIndex: _SelectedIndex,
+                selectedIndex: selectedIndex,
                 onTabChange: (index) {
                   setState(() {
-                    _SelectedIndex = index;
+                    selectedIndex = index;
                   });
                 },
               ),

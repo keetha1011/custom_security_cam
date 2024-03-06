@@ -1,8 +1,12 @@
-import 'dart:ui' as ui;
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:http/http.dart' as http;
+import 'package:share_plus/share_plus.dart';
+
 
 class PageHeaderText extends StatelessWidget {
   final String pageHeader;
@@ -17,7 +21,7 @@ class PageHeaderText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(right: 15, top: 25),
+      padding: const EdgeInsets.only(right: 15, top: 25),
       child: RichText(
         text: TextSpan(
           children: [
@@ -26,7 +30,7 @@ class PageHeaderText extends StatelessWidget {
                 style: TextStyle(color: Colors.black87, fontSize: 44, fontFamily: GoogleFonts.dmSans().fontFamily)
             ),
             TextSpan(
-                text: "\n" + pageSubHeader,
+                text: "\n$pageSubHeader",
                 style: TextStyle(color: Colors.black87, fontSize: 18, fontFamily: GoogleFonts.dmSans().fontFamily)
             )
           ],
@@ -79,8 +83,7 @@ Widget buildImage(String imageUrl) {
 class DownloadAndDisplayImages extends StatefulWidget {
   final String userEmail;
 
-  const DownloadAndDisplayImages({Key? key, required this.userEmail})
-      : super(key: key);
+  const DownloadAndDisplayImages({super.key, required this.userEmail});
 
   @override
   _DownloadAndDisplayImagesState createState() =>
@@ -90,12 +93,112 @@ class DownloadAndDisplayImages extends StatefulWidget {
 class ImagePreviewScreen extends StatelessWidget {
   final String imageUrl;
 
-  const ImagePreviewScreen({Key? key, required this.imageUrl}) : super(key: key);
+  const ImagePreviewScreen({super.key, required this.imageUrl});
+
+  Future<void> downloadPhoto() async {
+    try {
+      const directory =  '/storage/emulated/0/Pictures/SecurityCAM';
+      final filePath = '$directory/downloaded_image_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final response = await http.get(Uri.parse(imageUrl));
+
+      if (response.statusCode == 200) {
+        final imageBytes = response.bodyBytes;
+        final file = File(filePath);
+        await file.writeAsBytes(imageBytes);
+        if (kDebugMode) {
+          print('Image downloaded to $filePath');
+        }
+      } else {
+        if (kDebugMode) {
+          print('Failed to download image. Error: ${response.statusCode}');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error downloading image: $e');
+      }
+    }
+  }
+
+  Future<void> sendPhoto() async {
+    try {
+      http.Response response = await http.get(Uri.parse(imageUrl));
+      await Share.shareXFiles(
+        [XFile.fromData(response.bodyBytes, name: 'security_camera_captured${DateTime.now()}.jpg', mimeType: 'image/jpeg')],
+        text: 'CapturedImage',
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error sharing image: $e');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Wrap the entire content in a Stack widget
+      appBar: AppBar(
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.black,
+
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 3.0),
+            child: ElevatedButton.icon(
+                onPressed: () {
+                  FirebaseStorage.instance.refFromURL(imageUrl).delete();
+                  Navigator.pop(context);
+                },
+                icon: const Icon(
+                    Icons.delete,
+                  color: Colors.black,
+                ),
+                label: const Text(
+                    "Delete",
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 3.0),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                sendPhoto();
+              },
+              icon: const Icon(
+                Icons.send,
+                color: Colors.black,
+              ),
+              label: const Text(
+                "Send",
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 3.0),
+            child: ElevatedButton.icon(
+                onPressed: () {
+                  downloadPhoto();
+                },
+                icon: const Icon(
+                    Icons.download,
+                  color: Colors.black,
+                ),
+                label: const Text(
+                  "Download",
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
+            ),
+          ),
+        ],
+      ),
       body: Stack(
         children: [
 
@@ -104,13 +207,13 @@ class ImagePreviewScreen extends StatelessWidget {
               tag: "blurred-$imageUrl",
               child: Stack(
                 children: [
-                  Image.network(
-                    imageUrl,
+                  CachedNetworkImage(
+                    imageUrl: imageUrl,
                     width: double.infinity,
                     height: double.infinity,
                     fit: BoxFit.cover,
                     colorBlendMode: BlendMode.multiply,
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withOpacity(0.8),
                   ),
                   Container(
                     width: double.infinity,
@@ -123,14 +226,15 @@ class ImagePreviewScreen extends StatelessWidget {
           ),
           Center(
             child: InteractiveViewer(
-              boundaryMargin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20),
+              boundaryMargin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20),
               minScale: 1.0,
               maxScale: 2.0,
               clipBehavior: Clip.none,
               child: Hero(
                 tag: imageUrl,
-                child: Image.network(
-                  imageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
+
                 ),
               ),
             ),
@@ -177,7 +281,9 @@ class _DownloadAndDisplayImagesState extends State<DownloadAndDisplayImages> {
       setState(() {
         isLoading = false;
       });
-      print("Error fetching images: $e");
+      if (kDebugMode) {
+        print("Error fetching images: $e");
+      }
     }
   }
 
@@ -200,7 +306,7 @@ class _DownloadAndDisplayImagesState extends State<DownloadAndDisplayImages> {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ImagePreviewScreen(imageUrl: url!),
+                    builder: (context) => ImagePreviewScreen(imageUrl: url),
                   ),
                 );
               }
@@ -211,8 +317,14 @@ class _DownloadAndDisplayImagesState extends State<DownloadAndDisplayImages> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
                   child: url != null
-                      ? Image.network(
-                    url,
+                      ? CachedNetworkImage(
+                    imageUrl: url,
+                    //placeholder: (context, url) => const Center(
+                    //  child: CircularProgressIndicator(
+                    //    color: Colors.black38,
+                    //  ),
+                    //),
+                    //errorWidget: (context, url, error) => const Icon(Icons.error),
                     width: 200,
                     height: 200,
                     fit: BoxFit.cover,
@@ -230,5 +342,18 @@ class _DownloadAndDisplayImagesState extends State<DownloadAndDisplayImages> {
                 }).toList(),
               ),
         );
+  }
+}
+
+class AlertsListBuilder extends StatelessWidget {
+  const AlertsListBuilder({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        color: Colors.black,
+      ),
+    );
   }
 }

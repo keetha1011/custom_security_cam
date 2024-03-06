@@ -10,18 +10,17 @@ class AlertsList extends StatefulWidget {
 }
 
 class _AlertsListState extends State<AlertsList> {
-  // State variables and methods for image loading/display (implementation details omitted)
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Integrate your existing Google navigation bar implementation here
-
       body: ListView(
         children: [
-          Container(
-              child: PageHeaderText(pageHeader: "Alerts", pageSubHeader: "Works like an event log",)
-          ),
+          PageHeaderText(pageHeader: "Alerts", pageSubHeader: "Works like an event log",),
+
+          AlertsListBuilder(),
+
+          SizedBox(width: 123,height: 123,child: Container(color: Colors.red,),),
 
         ],
       ),
