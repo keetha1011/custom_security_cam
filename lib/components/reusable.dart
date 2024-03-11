@@ -1,11 +1,14 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
+import '../pages/home_page.dart';
 
 
 class PageHeaderText extends StatelessWidget {
@@ -80,6 +83,7 @@ Widget buildImage(String imageUrl) {
   return Image.network(imageUrl, width: 200, height: 200, fit: BoxFit.cover);
 }
 
+
 class DownloadAndDisplayImages extends StatefulWidget {
   final String userEmail;
 
@@ -143,58 +147,26 @@ class ImagePreviewScreen extends StatelessWidget {
 
         actions: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 3.0),
-            child: ElevatedButton.icon(
-                onPressed: () {
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: IconButton(
+                onPressed:() {
                   FirebaseStorage.instance.refFromURL(imageUrl).delete();
                   Navigator.pop(context);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HomePage()),
+                  );
                 },
-                icon: const Icon(
-                    Icons.delete,
-                  color: Colors.black,
-                ),
-                label: const Text(
-                    "Delete",
-                  style: TextStyle(
-                    color: Colors.black,
-                  ),
-                ),
+                icon: const Icon(Icons.delete_forever),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 3.0),
-            child: ElevatedButton.icon(
-              onPressed: () {
-                sendPhoto();
-              },
-              icon: const Icon(
-                Icons.send,
-                color: Colors.black,
-              ),
-              label: const Text(
-                "Send",
-                style: TextStyle(
-                  color: Colors.black,
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 3.0),
-            child: ElevatedButton.icon(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: IconButton(
                 onPressed: () {
-                  downloadPhoto();
+                  sendPhoto();
                 },
-                icon: const Icon(
-                    Icons.download,
-                  color: Colors.black,
-                ),
-                label: const Text(
-                  "Download",
-                  style: TextStyle(
-                    color: Colors.black,
-                  ),
-                ),
+                icon: const Icon(Icons.send),
             ),
           ),
         ],
