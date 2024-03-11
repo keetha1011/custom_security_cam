@@ -18,7 +18,7 @@ class _CapturesGalleryState extends State<CapturesGallery> {
         children: [
           const PageHeaderText(pageHeader: "Gallery", pageSubHeader: "Recent Captures by the Camera",),
           const SizedBox(width: 25,height: 25,),
-          DownloadAndDisplayImages(userEmail: FirebaseAuth.instance.currentUser?.email ?? ""),
+          DownloadAndDisplayImages(userEmail: "nnm23am025@nmamit.in",),
         ],
       ),
     );
