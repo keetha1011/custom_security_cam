@@ -1,12 +1,10 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 import '../pages/home_page.dart';
 
@@ -85,9 +83,9 @@ Widget buildImage(String imageUrl) {
 
 
 class DownloadAndDisplayImages extends StatefulWidget {
-  final String userEmail;
+  final String userUID;
 
-  const DownloadAndDisplayImages({super.key, required this.userEmail});
+  const DownloadAndDisplayImages({super.key, required this.userUID});
 
   @override
   _DownloadAndDisplayImagesState createState() =>
@@ -228,14 +226,14 @@ class _DownloadAndDisplayImagesState extends State<DownloadAndDisplayImages> {
   @override
   void initState() {
     super.initState();
-    fetchImages(widget.userEmail);
+    fetchImages(widget.userUID);
   }
 
-  Future<void> fetchImages(String userEmail) async {
+  Future<void> fetchImages(String userUID) async {
     try {
       final ListResult imagesRef = await storage
           .ref()
-          .child('$userEmail/captures')
+          .child('$userUID/')
           .listAll();
       final List<Reference> imageRefs = imagesRef.items;
 
@@ -247,6 +245,7 @@ class _DownloadAndDisplayImagesState extends State<DownloadAndDisplayImages> {
           imageUrlFutures);
       setState(() {
         imageUrls = urls;
+        imageUrls = imageUrls.reversed.toList();
         isLoading = false;
       });
     } on FirebaseException catch (e) {
@@ -317,15 +316,3 @@ class _DownloadAndDisplayImagesState extends State<DownloadAndDisplayImages> {
   }
 }
 
-class AlertsListBuilder extends StatelessWidget {
-  const AlertsListBuilder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Colors.black,
-      ),
-    );
-  }
-}

@@ -28,8 +28,6 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  //final User? user;
-  //const MyApp({Key? key, this.user}) : super(key: key);
   const MyApp({super.key});
 
   @override
@@ -41,8 +39,7 @@ class MyApp extends StatelessWidget {
         fontFamily: GoogleFonts.dmSans().fontFamily,
         primarySwatch: Colors.grey,
       ),
-      home: FirebaseAuth.instance.currentUser?.email != null ? const HomePage() : LoginPage() ,
-
+      home: FirebaseAuth.instance.currentUser != null ? const HomePage() : LoginPage(),
     );
   }
 }

@@ -2,7 +2,6 @@ import 'package:custom_security_cam/pages/captures_view.dart';
 import 'package:custom_security_cam/pages/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'alerts_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,7 +17,6 @@ class _HomePageState extends State<HomePage> {
     int selectedIndex = 0;
     final List<Widget> _widgetOptions = <Widget> [
       const CapturesGallery(),
-      const AlertsList(),
       const Preferences(),
     ];
 
@@ -40,17 +38,13 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.white54,
                 activeColor: Colors.white,
                 tabBackgroundColor: Colors.white12,
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(horizontal: 54, vertical: 16),
                 gap: 8,
 
                 tabs: const [
                   GButton(
                     icon: Icons.photo,
                     text: "Captures",
-                  ),
-                  GButton(
-                    icon: Icons.notifications,
-                    text: "Alerts",
                   ),
                   GButton(
                     icon: Icons.settings,

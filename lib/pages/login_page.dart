@@ -2,7 +2,6 @@ import 'package:custom_security_cam/components/reusable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import 'home_page.dart';
 
 class LoginPage extends StatelessWidget {
@@ -12,23 +11,42 @@ class LoginPage extends StatelessWidget {
   final passwordController = TextEditingController();
 
   Future<void> _login(BuildContext context) async {
-    try {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        if (kDebugMode) {
-          print('No user found for that email.');
-        }
-      } else if (e.code == 'wrong-password') {
-        if (kDebugMode) {
-          print('Wrong password provided for that user.');
-        }
+  try {
+    final email = usernameController.text.trim();
+    final password = passwordController.text.trim();
+
+    // Validate input
+    if (email.isEmpty || password.isEmpty) {
+      throw Exception('Email and password are required');
+    }
+
+    // Perform login
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+    // Navigate to home page
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomePage()),
+    );
+  } on FirebaseAuthException catch (e) {
+    if (e.code == 'user-not-found') {
+      if (kDebugMode) {
+        print('No user found for that email.');
+      }
+    } else if (e.code == 'wrong-password') {
+      if (kDebugMode) {
+        print('Wrong password provided for that user.');
       }
     }
+  } catch (e) {
+    if (kDebugMode) {
+      print('Error during login: $e');
+    }
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -39,16 +57,10 @@ class LoginPage extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 50),
-
-              //logo
+              
               const Icon(
                 Icons.lock,
                 size: 100,
-                //shadows: [Shadow(
-                //    color: Color.fromARGB(1, 200, 200, 200),
-                //    blurRadius: 0,
-                //    offset: Offset(25, 25)
-                //),],
               ),
 
               const SizedBox(height: 50),
@@ -96,12 +108,13 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               ElevatedButton(
                 onPressed: () {
                   _login(context);
                 },
+                style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.black), foregroundColor: MaterialStateProperty.all(Colors.white),),
                 child: const Text('Login'),
               ),
             ],
