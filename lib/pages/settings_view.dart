@@ -59,7 +59,7 @@ class _PreferencesState extends State<Preferences> {
     if (val1Checked == false) {
       print("gr");
     } else {
-      print("rg");
+      print("damn");
     }
   }
 
