@@ -52,8 +52,8 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Center(
+      body: ListView(
+        children: [Center(
           child: Column(
             children: [
               const SizedBox(height: 50),
@@ -120,7 +120,7 @@ class LoginPage extends StatelessWidget {
             ],
           ),
         ),
-      ),
+      ],),
     );
   }
 }
