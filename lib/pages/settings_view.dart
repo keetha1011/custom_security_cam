@@ -55,11 +55,20 @@ class _PreferencesState extends State<Preferences> {
     }
   }
 
+  enableCamera() {
+    if (val1Checked == false) {
+      print("gr");
+    } else {
+      print("damn");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     fetchProfilePhotoUrl();
     fetchDisplayName();
+    enableCamera();
   }
 
   @override
@@ -83,68 +92,90 @@ class _PreferencesState extends State<Preferences> {
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.grey,
-                        child: profilePhotoUrl != null
-                            ? ClipOval(
-                          child: CachedNetworkImage(
-                            imageUrl: profilePhotoUrl!,
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                            : const Icon(Icons.person),
-                      ),
-                      const SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            displayName ?? '',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundColor: Colors.grey,
+                          child: profilePhotoUrl != null
+                              ? ClipOval(
+                            child: CachedNetworkImage(
+                              imageUrl: profilePhotoUrl!,
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.cover,
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            user?.email ?? '',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
+                          )
+                              : const Icon(Icons.person),
+                        ),
+                        const SizedBox(width: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              displayName ?? '',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 16,),
-                      ElevatedButton(
-                        onPressed: () {
-                          FirebaseAuth.instance.signOut();
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => LoginPage()),
-                          );
-                        },
-                        style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.white), foregroundColor: MaterialStateProperty.all(Colors.red)),
-                        child: const Text(
-                          "Log out",
-                          style: TextStyle(
-                            color: Colors.red,
-                            shadows: [Shadow(
-                              offset: Offset(0, 0),
-                              blurRadius: 48,
+                            const SizedBox(height: 4),
+                            Text(
+                              user?.email ?? '',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(width: 16,),
+                        ElevatedButton(
+                          onPressed: () {
+                            FirebaseAuth.instance.signOut();
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => LoginPage()),
+                            );
+                          },
+                          style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.white), foregroundColor: MaterialStateProperty.all(Colors.red)),
+                          child: const Text(
+                            "Log out",
+                            style: TextStyle(
                               color: Colors.red,
-                            )]
+                              shadows: [Shadow(
+                                offset: Offset(0, 0),
+                                blurRadius: 48,
+                                color: Colors.red,
+                              )]
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
+
+                Container(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                    child: Row(
+                      children: [
+                        const Text("Enable Camera"),
+
+                        Checkbox(value: val1Checked, onChanged: (value) {
+                          setState(() {
+                            val1Checked = value!;
+                            enableCamera();
+                          });
+                        },)
+                      ],
+                    ),
+                  ),
+                ),
+
                 Container(
 
                   child: Padding(
