@@ -1,5 +1,5 @@
-import 'package:custom_security_cam/pages/captures_view.dart';
-import 'package:custom_security_cam/pages/settings_view.dart';
+import 'package:CamReview/pages/captures_view.dart';
+import 'package:CamReview/pages/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
@@ -39,6 +39,7 @@ class _HomePageState extends State<HomePage> {
                 activeColor: Colors.white,
                 tabBackgroundColor: Colors.white12,
                 padding: const EdgeInsets.symmetric(horizontal: 54, vertical: 16),
+                mainAxisAlignment: MainAxisAlignment.center,
                 gap: 8,
 
                 tabs: const [

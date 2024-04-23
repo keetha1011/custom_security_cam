@@ -1,10 +1,13 @@
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:custom_security_cam/pages/login_page.dart';
+import 'package:CamReview/pages/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+
 
 import '../components/reusable.dart';
 
@@ -20,13 +23,36 @@ class _PreferencesState extends State<Preferences> {
   String? profilePhotoUrl;
   String? displayName;
   bool val1Checked = false;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> pickImage(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(source: source);
+    if (pickedFile != null) {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final profilePhotoRef = FirebaseStorage.instance
+            .ref()
+            .child('${user.uid}/profpic/0.jpg');
+
+        try {
+          await profilePhotoRef.putFile(File(pickedFile.path));
+          final profilePhotoUrl = await profilePhotoRef.getDownloadURL();
+          setState(() {
+            this.profilePhotoUrl = profilePhotoUrl;
+          });
+        } catch (e) {
+          print('Error uploading profile photo: $e');
+        }
+      }
+    }
+  }
 
   Future<void> fetchProfilePhotoUrl() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       final profilePhotoRef = FirebaseStorage.instance
           .ref()
-          .child('${user.uid}/nigs/0.jpg');
+          .child('${user.uid}/profpic/0.jpg');
 
       try {
         final profilePhotoUrl = await profilePhotoRef.getDownloadURL();
@@ -55,20 +81,69 @@ class _PreferencesState extends State<Preferences> {
     }
   }
 
-  enableCamera() {
-    if (val1Checked == false) {
-      print("gr");
-    } else {
-      print("damn");
+  Future<void> setDisplayName(final UserName) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if(user != null) {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .set({"name": UserName});
     }
   }
+
+  Future<void> updateDisplayName() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final newDisplayName = await showDialog<String>(
+        context: context,
+        builder: (BuildContext context) {
+          final nameController = TextEditingController(text: displayName);
+          return AlertDialog(
+            title: const Text('Update Display Name'),
+            content: TextField(
+              controller: nameController,
+              decoration: const InputDecoration(
+                hintText: 'Enter your new display name',
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  setDisplayName(nameController);
+                  Navigator.pop(context, nameController.text.trim());
+                  fetchDisplayName();
+                  },
+                child: const Text('Save'),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (newDisplayName != null && newDisplayName.isNotEmpty) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .update({'name': newDisplayName});
+        setState(() {
+          displayName = newDisplayName;
+        });
+      }
+    }
+  }
+
+
+
 
   @override
   void initState() {
     super.initState();
     fetchProfilePhotoUrl();
     fetchDisplayName();
-    enableCamera();
   }
 
   @override
@@ -91,44 +166,82 @@ class _PreferencesState extends State<Preferences> {
                     color: Colors.white60,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Colors.grey,
-                          child: profilePhotoUrl != null
-                              ? ClipOval(
-                            child: CachedNetworkImage(
-                              imageUrl: profilePhotoUrl!,
-                              width: 60,
-                              height: 60,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                              : const Icon(Icons.person),
+                        GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return SafeArea(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      ListTile(
+                                        leading: const Icon(Icons.camera_alt),
+                                        title: const Text('Take Photo'),
+                                        onTap: () {
+                                          pickImage(ImageSource.camera);
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                      ListTile(
+                                        leading: const Icon(Icons.image),
+                                        title: const Text('Choose from Gallery'),
+                                        onTap: () {
+                                          pickImage(ImageSource.gallery);
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          child: CircleAvatar(
+                            radius: 30,
+                            backgroundColor: Colors.grey,
+                            child: profilePhotoUrl != null
+                                ? ClipOval(
+                              child: CachedNetworkImage(
+                                imageUrl: profilePhotoUrl!,
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                                : const Icon(Icons.edit),
+                          ),
                         ),
                         const SizedBox(width: 10),
                         Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.start,
+
                           children: [
-                            Text(
-                              displayName ?? '',
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                            GestureDetector(
+                              onTap: updateDisplayName,
+                              child: Text(
+                                displayName ?? 'Set your name',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  //fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                            const SizedBox(height: 4),
                             Text(
                               user?.email ?? '',
                               style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
+                                fontSize: 14,
+
                               ),
                             ),
+                            const SizedBox(height: 4),
+
                           ],
                         ),
                         const SizedBox(width: 16,),
@@ -153,24 +266,6 @@ class _PreferencesState extends State<Preferences> {
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                Container(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                    child: Row(
-                      children: [
-                        const Text("Enable Camera"),
-
-                        Checkbox(value: val1Checked, onChanged: (value) {
-                          setState(() {
-                            val1Checked = value!;
-                            enableCamera();
-                          });
-                        },)
                       ],
                     ),
                   ),

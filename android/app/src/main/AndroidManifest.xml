@@ -3,7 +3,7 @@
     android:versionCode="1.0.0(pre-alpha)"
     android:versionName="nastynichehunting">
     <application
-        android:label="Security Camera"
+        android:label="CamReview"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

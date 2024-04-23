@@ -1,4 +1,4 @@
-name: custom_security_cam
+name: CamReview
 description: "An app to manage a custom designed security camera system"
 publish_to: 'none'
 version: 1.0.0+1
@@ -25,6 +25,8 @@ dependencies:
   path_provider: ^2.1.2
   permission_handler: ^11.3.0
   share_plus: ^7.2.2
+  fluttertoast: ^8.2.5
+  image_picker: ^1.1.0
 
 dev_dependencies:
   flutter_test:

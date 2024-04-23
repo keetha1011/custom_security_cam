@@ -290,12 +290,6 @@ class _DownloadAndDisplayImagesState extends State<DownloadAndDisplayImages> {
                   child: url != null
                       ? CachedNetworkImage(
                     imageUrl: url,
-                    //placeholder: (context, url) => const Center(
-                    //  child: CircularProgressIndicator(
-                    //    color: Colors.black38,
-                    //  ),
-                    //),
-                    //errorWidget: (context, url, error) => const Icon(Icons.error),
                     width: 200,
                     height: 200,
                     fit: BoxFit.cover,
