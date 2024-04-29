@@ -1,5 +1,5 @@
-import 'package:CamReview/pages/captures_view.dart';
-import 'package:CamReview/pages/settings_view.dart';
+import 'package:cam_review/pages/captures_view.dart';
+import 'package:cam_review/pages/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 

@@ -1,4 +1,4 @@
-import 'package:CamReview/pages/login_page.dart';
+import 'package:cam_review/pages/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -113,7 +113,7 @@ class SignupPage extends StatelessWidget {
                 const SizedBox(height: 10,),
 
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -138,7 +138,7 @@ class SignupPage extends StatelessWidget {
                   ),
                 ),
 
-                SizedBox(height: 20,),
+                const SizedBox(height: 20,),
 
                 SizedBox(
                   width: 200,

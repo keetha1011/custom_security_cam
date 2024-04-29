@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:CamReview/pages/login_page.dart';
+import 'package:cam_review/pages/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -41,7 +42,9 @@ class _PreferencesState extends State<Preferences> {
             this.profilePhotoUrl = profilePhotoUrl;
           });
         } catch (e) {
-          print('Error uploading profile photo: $e');
+          if (kDebugMode) {
+            print('Error uploading profile photo: $e');
+          }
         }
       }
     }
@@ -60,7 +63,9 @@ class _PreferencesState extends State<Preferences> {
           this.profilePhotoUrl = profilePhotoUrl;
         });
       } catch (e) {
-        print('Error fetching profile photo URL: $e');
+        if (kDebugMode) {
+          print('Error fetching profile photo URL: $e');
+        }
       }
     }
   }
@@ -81,13 +86,13 @@ class _PreferencesState extends State<Preferences> {
     }
   }
 
-  Future<void> setDisplayName(final UserName) async {
+  Future<void> setDisplayName(final userName) async {
     final user = FirebaseAuth.instance.currentUser;
     if(user != null) {
-      final userDoc = await FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
-          .set({"name": UserName});
+          .set({"name": userName});
     }
   }
 
@@ -271,21 +276,23 @@ class _PreferencesState extends State<Preferences> {
                   ),
                 ),
 
-                Container(
 
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                    child: Column(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                  child: Column(
+                    children : [
+                      const Center(
+                          child: SizedBox(
+                            width: 50,
+                            height: 30,
+                          ),
+                      ),
+                      Text("This app was made by Guna, Kshauneesh, Keerthan, Tanvi", style: TextStyle(fontFamily: GoogleFonts.dmSans().fontFamily),),
+                      Text("as a part of Home Automation Internship of the first year.\nUnder the guidance of Ms. Sneha Shetty",style: TextStyle(fontFamily: GoogleFonts.dmSans().fontFamily),),
 
-                      children : [
-                        Center(child: SizedBox(width: 50,height: 30,)),
-                        Text("This app was made by Guna, Kshauneesh, Keerthan, Tanvi", style: TextStyle(fontFamily: GoogleFonts.dmSans().fontFamily),),
-                        Text("as a part of Home Automation Internship of the first year.\nUnder the guidance of Ms. Sneha Shetty",style: TextStyle(fontFamily: GoogleFonts.dmSans().fontFamily),),
-
-                        const SizedBox(height: 12,),
-                        Text("N.M.A.M.I.T",style: TextStyle(fontFamily: GoogleFonts.dmSans().fontFamily),textAlign: TextAlign.right,),
-                      ],
-                    ),
+                      const SizedBox(height: 12,),
+                      Text("N.M.A.M.I.T",style: TextStyle(fontFamily: GoogleFonts.dmSans().fontFamily),textAlign: TextAlign.right,),
+                    ],
                   ),
                 ),
               ],

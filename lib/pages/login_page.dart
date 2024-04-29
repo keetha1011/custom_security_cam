@@ -1,7 +1,6 @@
-import 'package:CamReview/components/reusable.dart';
+import 'package:cam_review/components/reusable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'home_page.dart';
@@ -41,10 +40,14 @@ class LoginPage extends StatelessWidget {
 
     userRef.get().then( (document) {
       if (document.exists) {
-        print(document);
+        if (kDebugMode) {
+          print(document);
+        }
       } else {
         userRef.set({ 'name': "Set your name" });
-        print("executed this code");
+        if (kDebugMode) {
+          print("executed this code");
+        }
       }
     }).catchError((error) {
       if (kDebugMode) {
@@ -130,10 +133,15 @@ class LoginPage extends StatelessWidget {
           textColor: Colors.white,
           fontSize: 16.0
       );
-    } on FirebaseAuthException catch (e) {
-      if (kDebugMode) {
-        print("$e");
-      }
+    } on FirebaseAuthException {
+      Fluttertoast.showToast(
+          msg: "Incorrect Credentials provided!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
     }
   }
 
@@ -172,7 +180,7 @@ class LoginPage extends StatelessWidget {
                 const SizedBox(height: 10),
 
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

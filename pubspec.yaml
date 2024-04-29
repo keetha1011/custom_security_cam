@@ -1,4 +1,4 @@
-name: CamReview
+name: cam_review
 description: "An app to manage a custom designed security camera system"
 publish_to: 'none'
 version: 1.0.0+1
@@ -44,6 +44,5 @@ flutter:
   uses-material-design: true
 
   assets:
-    - lib/images/
     - assets/images/
 
